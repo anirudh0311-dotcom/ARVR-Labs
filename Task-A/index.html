@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task A - 3 Degrees of Rotation (VR Application)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Main canvas container -->
+    <div id="canvas-container"></div>
+    
+    <!-- Control Panel -->
+    <div id="control-panel">
+        <h1>3D Object Rotation Control</h1>
+        
+        <!-- Status Information -->
+        <div id="info-section">
+            <p><strong>VR Mode:</strong> <span id="vr-status">Not Active</span></p>
+            <p><strong>Current Rotation:</strong></p>
+            <ul>
+                <li>X Rotation: <span id="rotation-x">0°</span></li>
+                <li>Y Rotation: <span id="rotation-y">0°</span></li>
+                <li>Z Rotation: <span id="rotation-z">0°</span></li>
+            </ul>
+        </div>
+
+        <!-- Rotation Controls -->
+        <div id="rotation-controls">
+            <h2>Manual Rotation Controls</h2>
+            
+            <!-- X-Axis Control -->
+            <div class="control-group">
+                <label for="rotate-x">X-Axis Rotation (Roll):</label>
+                <input type="range" id="rotate-x" min="0" max="360" value="0" step="1">
+                <span id="x-value">0°</span>
+            </div>
+
+            <!-- Y-Axis Control -->
+            <div class="control-group">
+                <label for="rotate-y">Y-Axis Rotation (Pitch):</label>
+                <input type="range" id="rotate-y" min="0" max="360" value="0" step="1">
+                <span id="y-value">0°</span>
+            </div>
+
+            <!-- Z-Axis Control -->
+            <div class="control-group">
+                <label for="rotate-z">Z-Axis Rotation (Yaw):</label>
+                <input type="range" id="rotate-z" min="0" max="360" value="0" step="1">
+                <span id="z-value">0°</span>
+            </div>
+        </div>
+
+        <!-- Animation Controls -->
+        <div id="animation-controls">
+            <h2>Animation Modes</h2>
+            <button id="auto-rotate-btn" class="control-btn">Auto Rotate</button>
+            <button id="reset-btn" class="control-btn reset">Reset All</button>
+        </div>
+
+        <!-- VR Control -->
+        <div id="vr-controls">
+            <h2>VR Mode</h2>
+            <button id="enter-vr-btn" class="control-btn vr">Enter VR Mode</button>
+        </div>
+
+        <!-- Keyboard Instructions -->
+        <div id="instructions">
+            <h2>Keyboard Shortcuts</h2>
+            <p><strong>Arrow Keys:</strong> Rotate X & Y axes</p>
+            <p><strong>W/S:</strong> Rotate Z-axis</p>
+            <p><strong>Space:</strong> Toggle Auto-Rotate</p>
+            <p><strong>R:</strong> Reset Rotation</p>
+        </div>
+    </div>
+
+    <!-- Three.js Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    
+    <!-- WebXR Polyfill (for VR support) -->
+    <script src="https://cdn.jsdelivr.net/npm/webxr-polyfill@latest/build/webxr-polyfill.js"></script>
+    
+    <!-- Application Script -->
+    <script src="script.js"></script>
+</body>
+</html>
