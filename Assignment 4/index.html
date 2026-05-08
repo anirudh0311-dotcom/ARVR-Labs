@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -14,23 +15,24 @@
     }
   </style>
 </head>
+
 <body>
   <a-scene background="color: #000000">
-    
+
     <!-- Background Space directly applied to sky -->
     <a-sky src="stars.jpg"></a-sky>
 
     <!-- Ambient Light so the dark side of planets is still slightly visible -->
     <a-light type="ambient" color="#222"></a-light>
-    
+
     <!-- Sun Light coming from the Sun's position -->
     <a-light type="point" color="#FFF" intensity="1.8" position="15 5 -10"></a-light>
     <!-- Slight directional fill light -->
     <a-light type="directional" color="#888" intensity="0.3" position="-5 -2 5"></a-light>
 
     <!-- The distant Sun (Visual only) -->
-    <a-sphere src="sun.jpg" radius="4" position="15 5 -10" material="shader: flat; color: #FFF8D6" 
-              animation="property: rotation; to: 0 360 0; loop: true; dur: 40000; easing: linear">
+    <a-sphere src="sun.jpg" radius="4" position="15 5 -10" material="shader: flat; color: #FFF8D6"
+      animation="property: rotation; to: 0 360 0; loop: true; dur: 40000; easing: linear">
     </a-sphere>
 
     <!-- Main Orbital System Wrapper (Moved back a bit for better view) -->
@@ -39,7 +41,7 @@
       <!-- Earth Entity -->
       <!-- Earth rotates on its own axis continuously (10 seconds per rotation) -->
       <a-sphere src="earth.jpg" radius="1.8"
-                animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
       </a-sphere>
 
       <!-- Moon Orbit Pivot -->
@@ -51,7 +53,7 @@
         <!-- The Moon is offset by 'position' and rotates on its own axis. 
              (Made it spin faster: 5 seconds per rotation so you can easily see it rotating!) -->
         <a-sphere src="moon.jpg" radius="0.45" position="4 0 0"
-                  animation="property: rotation; to: 0 360 0; loop: true; dur: 5000; easing: linear">
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 5000; easing: linear">
         </a-sphere>
 
       </a-entity>
@@ -62,4 +64,5 @@
     <a-camera position="0 2 0"></a-camera>
   </a-scene>
 </body>
+
 </html>
