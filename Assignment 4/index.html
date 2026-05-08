@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WebXR Earth-Moon Orbital System</title>
+  <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #000;
+    }
+  </style>
+</head>
+
+<body>
+  <a-scene>
+    <!-- Asset Management -->
+    <a-assets>
+      <img id="earthTexture" src="earth.jpg" crossorigin="anonymous" />
+      <img id="moonTexture" src="moon.jpg" crossorigin="anonymous" />
+      <img id="skyTexture" src="stars.jpg" crossorigin="anonymous" />
+    </a-assets>
+
+    <!-- Background Space -->
+    <a-sky src="#skyTexture"></a-sky>
+
+    <!-- Lighting Setup -->
+    <a-light type="ambient" color="#222"></a-light>
+    <!-- Sun light coming from a specific direction -->
+    <a-light type="directional" color="#fff" intensity="1.5" position="10 5 10"></a-light>
+
+    <!-- Main Orbital System Wrapper -->
+    <a-entity position="0 1.5 -6">
+
+      <!-- Earth -->
+      <!-- Earth rotates on its own axis continuously -->
+      <a-sphere src="#earthTexture" radius="1.5"
+        animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
+      </a-sphere>
+
+      <!-- Moon Orbit Pivot -->
+      <!-- This entity acts as the pivot point at the center of the Earth. 
+             Rotating it causes its child (the Moon) to revolve around the Earth. -->
+      <a-entity animation="property: rotation; to: 0 360 0; loop: true; dur: 27000; easing: linear">
+
+        <!-- Moon -->
+        <!-- The Moon is offset by 'position' and rotates on its own axis. -->
+        <a-sphere src="#moonTexture" radius="0.4" position="4 0 0"
+          animation="property: rotation; to: 0 360 0; loop: true; dur: 27000; easing: linear">
+        </a-sphere>
+
+      </a-entity>
+
+    </a-entity>
+
+    <!-- Camera position -->
+    <a-camera position="0 1.6 0"></a-camera>
+  </a-scene>
+</body>
+
+</html>
