@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task B - Marker-Based AR Application</title>
+    <link rel="stylesheet" href="style.css">
+
+    <!-- A-Frame Core -->
+    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
+
+    <!-- AR.js for Marker Detection (using A-Frame version) -->
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        a-scene {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <!-- A-Frame Scene with AR -->
+    <a-scene
+    embedded
+    arjs="sourceType: webcam; debugUIEnabled: false;"
+    vr-mode-ui="enabled: false"
+    >
+        <!-- AR Camera - This handles the camera feed and marker tracking -->
+        <a-entity camera></a-entity>
+
+        <!-- Marker Detection - Using 'hiro' marker pattern (Hero Marker) -->
+        <a-marker preset="hiro">
+
+            <a-box
+                id="rotating-cube"
+                position="0 0.5 0"
+                scale="1 1 1"
+                material="color: #4c46f5; metalness: 0.7; roughness: 0.2;"
+                animation="property: rotation;
+                        to: 360 360 360;
+                        loop: true;
+                        dur: 5000;
+                        easing: linear">
+            </a-box>
+
+        </a-marker>
+
+        <!-- Ambient lighting -->
+        <a-light type="ambient" color="#ffffff" intensity="0.5"></a-light>
+
+    </a-scene>
+
+    <div class="floating-status">
+        <div id="status-dot" class="status-dot waiting"></div>
+        <div id="status-text" class="waiting">Waiting for Hiro marker...</div>
+    </div>
+
+    <!-- Camera Loading Overlay -->
+    <div id="camera-loading" class="camera-loading">
+        <div class="loading-content">
+            <div class="loading-spinner"></div>
+            <h2> Initializing Camera</h2>
+            <p>Please allow camera access when prompted</p>
+            <div class="loading-steps">
+                <div class="step active">Requesting camera permission</div>
+                <div class="step">Initializing AR system</div>
+                <div class="step">Ready for marker detection</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Camera Error Overlay -->
+    <div id="camera-error" class="camera-error hidden">
+        <div class="error-content">
+            <div class="error-icon"></div>
+            <h2>Camera Access Required</h2>
+            <p>To use AR marker detection, camera access is needed.</p>
+            <button id="retry-camera" class="retry-button"> Retry Camera Access</button>
+            <div class="error-details">
+                <p><strong>Troubleshooting:</strong></p>
+                <ul>
+                    <li>Click "Allow" when prompted for camera access</li>
+                    <li>Check if another app is using the camera</li>
+                    <li>Try refreshing the page</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- Control Panel Overlay -->
+    <div id="info-panel" class="info-panel">
+        <div class="panel-content">
+            <h1> AR Marker Detection</h1>
+            
+            <div class="status-section">
+                <p><strong>Status:</strong> <span id="marker-status" class="status-text">Waiting for marker...</span></p>
+                <p><strong>Marker Type:</strong> Hero Marker (Hiro Pattern)</p>
+            </div>
+
+            <div class="instructions-section">
+                <h2> How to Use:</h2>
+                <ol>
+                    <li><strong>Print or Display Marker:</strong> Download the Hero marker pattern</li>
+                    <li><strong>Point Camera:</strong> Show marker to your device camera</li>
+                    <li><strong>View 3D Object:</strong> Rotating cube will appear on the marker</li>
+                    <li><strong>Move Around:</strong> Rotate and move the marker to view from different angles</li>
+                </ol>
+            </div>
+
+            <div class="features-section">
+                <h2> Features:</h2>
+                <ul>
+                    <li> Real-time marker detection</li>
+                    <li> 3D object anchored to marker</li>
+                    <li> Continuous rotation animation</li>
+                    <li> Multi-colored cube faces</li>
+                    <li> WebXR compatible</li>
+                </ul>
+            </div>
+
+            <div class="marker-section">
+                <h2> Hero Marker Pattern:</h2>
+                <p>Look for the distinctive checkerboard pattern below in the camera:</p>
+                <svg viewBox="0 0 100 100" width="80" height="80">
+                    <!-- Hero Marker Pattern (simplified) -->
+                    <rect width="100" height="100" fill="white" stroke="black" stroke-width="2"/>
+                    <rect x="10" y="10" width="80" height="80" fill="black"/>
+                    <rect x="20" y="20" width="60" height="60" fill="white"/>
+                    <rect x="30" y="30" width="40" height="40" fill="black"/>
+                    <rect x="40" y="40" width="20" height="20" fill="white"/>
+                </svg>
+            </div>
+
+            <div class="button-section">
+                <button id="info-toggle" class="info-btn">Hide Info</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Custom Script -->
+    <script src="script.js"></script>
+</body>
+</html>
