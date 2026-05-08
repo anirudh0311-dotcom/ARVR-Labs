@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WebXR Earth-Moon Orbital System</title>
+  <title>Enhanced WebXR Earth-Moon Orbital System</title>
   <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
   <style>
     body {
@@ -15,51 +14,52 @@
     }
   </style>
 </head>
-
 <body>
-  <a-scene>
-    <!-- Asset Management -->
-    <a-assets>
-      <img id="earthTexture" src="earth.jpg" />
-      <img id="moonTexture" src="moon.jpg" />
-      <img id="skyTexture" src="stars.jpg" />
-    </a-assets>
+  <a-scene background="color: #000000">
+    
+    <!-- Background Space directly applied to sky -->
+    <a-sky src="stars.jpg"></a-sky>
 
-    <!-- Background Space -->
-    <a-sky src="#skyTexture"></a-sky>
-
-    <!-- Lighting Setup -->
+    <!-- Ambient Light so the dark side of planets is still slightly visible -->
     <a-light type="ambient" color="#222"></a-light>
-    <!-- Sun light coming from a specific direction -->
-    <a-light type="directional" color="#fff" intensity="1.5" position="10 5 10"></a-light>
+    
+    <!-- Sun Light coming from the Sun's position -->
+    <a-light type="point" color="#FFF" intensity="1.8" position="15 5 -10"></a-light>
+    <!-- Slight directional fill light -->
+    <a-light type="directional" color="#888" intensity="0.3" position="-5 -2 5"></a-light>
 
-    <!-- Main Orbital System Wrapper -->
-    <a-entity position="0 1.5 -6">
+    <!-- The distant Sun (Visual only) -->
+    <a-sphere src="sun.jpg" radius="4" position="15 5 -10" material="shader: flat; color: #FFF8D6" 
+              animation="property: rotation; to: 0 360 0; loop: true; dur: 40000; easing: linear">
+    </a-sphere>
 
-      <!-- Earth -->
-      <!-- Earth rotates on its own axis continuously -->
-      <a-sphere src="#earthTexture" radius="1.5"
-        animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
+    <!-- Main Orbital System Wrapper (Moved back a bit for better view) -->
+    <a-entity position="0 1.5 -8">
+
+      <!-- Earth Entity -->
+      <!-- Earth rotates on its own axis continuously (10 seconds per rotation) -->
+      <a-sphere src="earth.jpg" radius="1.8"
+                animation="property: rotation; to: 0 360 0; loop: true; dur: 10000; easing: linear">
       </a-sphere>
 
       <!-- Moon Orbit Pivot -->
       <!-- This entity acts as the pivot point at the center of the Earth. 
-             Rotating it causes its child (the Moon) to revolve around the Earth. -->
-      <a-entity animation="property: rotation; to: 0 360 0; loop: true; dur: 27000; easing: linear">
+           Rotating it causes its child (the Moon) to revolve around the Earth. (20 seconds for full orbit) -->
+      <a-entity animation="property: rotation; to: 0 360 0; loop: true; dur: 20000; easing: linear">
 
-        <!-- Moon -->
-        <!-- The Moon is offset by 'position' and rotates on its own axis. -->
-        <a-sphere src="#moonTexture" radius="0.4" position="4 0 0"
-          animation="property: rotation; to: 0 360 0; loop: true; dur: 27000; easing: linear">
+        <!-- Moon Entity -->
+        <!-- The Moon is offset by 'position' and rotates on its own axis. 
+             (Made it spin faster: 5 seconds per rotation so you can easily see it rotating!) -->
+        <a-sphere src="moon.jpg" radius="0.45" position="4 0 0"
+                  animation="property: rotation; to: 0 360 0; loop: true; dur: 5000; easing: linear">
         </a-sphere>
 
       </a-entity>
 
     </a-entity>
 
-    <!-- Camera position -->
-    <a-camera position="0 1.6 0"></a-camera>
+    <!-- Camera setup to allow looking around -->
+    <a-camera position="0 2 0"></a-camera>
   </a-scene>
 </body>
-
 </html>
