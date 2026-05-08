@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Assignment 2: Geostationary Visualization</title>
+  <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #000;
+    }
+  </style>
+</head>
+
+<body>
+  <a-scene>
+    <!-- Asset Management System -->
+    <a-assets>
+      <img id="earth-texture"
+        src="https://raw.githubusercontent.com/mrdoob/three.js/master/examples/textures/planets/earth_atmos_2048.jpg"
+        crossorigin="anonymous">
+    </a-assets>
+
+    <!-- Space background -->
+    <a-sky color="#050505"></a-sky>
+
+    <!-- Lighting for realism -->
+    <a-light type="ambient" color="#333"></a-light>
+    <!-- Directional light representing the Sun -->
+    <a-light type="directional" position="-5 5 5" intensity="1.5" color="#ffffff"></a-light>
+
+    <!-- Floor Plane with map texture -->
+    <!-- The map is flattened and placed on the ground -->
+    <a-plane src="#earth-texture" position="0 -1 -4" rotation="-90 0 0" width="12" height="6"></a-plane>
+
+    <!-- Main Container for the Globe and Stand -->
+    <a-entity position="0 1.5 -4">
+
+      <!-- The Base of the Stand -->
+      <a-cylinder position="0 -1.6 0" radius="0.8" height="0.15" color="#EEEEEE"
+        material="metalness: 0.3; roughness: 0.8"></a-cylinder>
+
+      <!-- Connecting rod from base to the globe's bottom axis -->
+      <!-- We can use a simple cylinder that bridges the gap if needed, but a large base usually covers it -->
+
+      <!-- Parent Entity: Sets the Earth's axial tilt (23.5 degrees) -->
+      <a-entity rotation="0 0 23.5">
+
+        <!-- The Arc (Stand Arm) -->
+        <!-- A semi-circle on the left side connecting the poles -->
+        <!-- arc="180" covers the top half, rotating by 90 on Z makes it cover the left half -->
+        <a-torus radius="1.35" radius-tubular="0.03" color="#DDDDDD" arc="180" rotation="0 0 90"
+          material="metalness: 0.6; roughness: 0.4"></a-torus>
+
+        <!-- Small poles sticking out at the top and bottom -->
+        <a-cylinder position="0 1.35 0" radius="0.04" height="0.15" color="#DDDDDD"></a-cylinder>
+        <a-cylinder position="0 -1.35 0" radius="0.04" height="0.15" color="#DDDDDD"></a-cylinder>
+
+        <!-- Child Entity: Handles the continuous rotation -->
+        <a-entity animation="property: rotation; to: 0 360 0; loop: true; dur: 15000; easing: linear">
+
+          <!-- The Globe -->
+          <a-sphere src="#earth-texture" radius="1.25" segments-height="64" segments-width="64">
+          </a-sphere>
+
+        </a-entity>
+
+      </a-entity>
+
+      <!-- UI: 3D Text Label -->
+      <!-- Positioned to the right of the tilted globe, in green -->
+      <a-text value="The Earth" position="1.5 0.5 0" color="#00FF00" scale="1.5 1.5 1.5"></a-text>
+
+    </a-entity>
+
+    <!-- Camera positioned to view the entire setup -->
+    <a-camera position="0 1.5 0"></a-camera>
+
+  </a-scene>
+</body>
+
+</html>
