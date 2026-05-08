@@ -13,7 +13,7 @@ This repository contains the deliverables for **Assignment 5: Marker-Based AR wi
 To view the AR application:
 1. Open the project in Unity.
 2. Ensure the **Vuforia Engine** package is imported and configured.
-3. Open the main scene.
+3. Open the main scene (`Scenes/Assignment5_AR.unity`).
 4. Print out or display the custom marker from the `Marker/` directory on a digital screen.
 5. Enter Play mode in Unity and point your webcam at the marker to see the 3D globe augmented!
 
