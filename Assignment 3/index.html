@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <title>Assignment 3: Interactive Dynamic Pallets</title>
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://unpkg.com/aframe-environment-component@1.3.3/dist/aframe-environment-component.min.js"></script>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    #ui-container {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      color: #e2e8f0;
+      background: rgba(15, 23, 42, 0.85);
+      padding: 15px 30px;
+      border-radius: 12px;
+      pointer-events: none;
+      z-index: 999;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
+      border: 1px solid #334155;
+      backdrop-filter: blur(4px);
+    }
+
+    .title {
+      font-weight: 700;
+      font-size: 1.4em;
+      margin-bottom: 8px;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    .controls {
+      font-size: 0.95em;
+      letter-spacing: 0.5px;
+      opacity: 0.9;
+    }
+  </style>
+  <script>
+    // Custom component to handle flipping interactions
+    AFRAME.registerComponent('flip-on-interaction', {
+      schema: {
+        axis: { type: 'string', default: 'y' }
+      },
+      init: function () {
+        this.isFlipped = false;
+        this.isAnimating = false;
+
+        // Handle Hover Start
+        this.el.addEventListener('hover-start', () => {
+          this.el.setAttribute('animation__scale', {
+            property: 'scale',
+            to: '1.05 1.05 1.05',
+            dur: 200,
+            easing: 'easeOutQuad'
+          });
+          const cursor = document.querySelector('a-cursor');
+          if (cursor) cursor.setAttribute('color', '#38bdf8');
+        });
+
+        // Handle Hover End
+        this.el.addEventListener('hover-end', () => {
+          this.el.setAttribute('animation__scale', {
+            property: 'scale',
+            to: '1 1 1',
+            dur: 200,
+            easing: 'easeOutQuad'
+          });
+          const cursor = document.querySelector('a-cursor');
+          if (cursor) cursor.setAttribute('color', '#FFF');
+        });
+
+        // Handle Click (Flip)
+        this.el.addEventListener('do-flip', () => {
+          if (this.isAnimating) return;
+          this.isAnimating = true;
+          this.isFlipped = !this.isFlipped;
+
+          const targetRotation = this.isFlipped ? 180 : 0;
+          let toStr = '';
+          if (this.data.axis === 'x') {
+            toStr = `${targetRotation} 0 0`;
+          } else {
+            toStr = `0 ${targetRotation} 0`;
+          }
+
+          this.el.setAttribute('animation__flip', {
+            property: 'rotation',
+            to: toStr,
+            dur: 800,
+            easing: 'easeInOutBack' // Gives a nice springy effect
+          });
+
+          // Unlock animation lock after duration
+          setTimeout(() => {
+            this.isAnimating = false;
+          }, 800);
+        });
+      }
+    });
+
+    // Dynamically build pallets to keep HTML clean and structured
+    document.addEventListener('DOMContentLoaded', () => {
+      const pallets = document.querySelectorAll('.pallet');
+
+      pallets.forEach(pallet => {
+        const quote = pallet.getAttribute('data-quote');
+        const author = pallet.getAttribute('data-author');
+        // Randomly assign 'x' or 'y' axis for the flip
+        const axis = Math.random() > 0.5 ? 'x' : 'y';
+
+        // Container that will perform the rotation
+        const flipper = document.createElement('a-entity');
+        flipper.setAttribute('flip-on-interaction', `axis: ${axis}`);
+
+        // Add a Spotlight above each pallet pointing down at it
+        const spotLight = document.createElement('a-light');
+        spotLight.setAttribute('type', 'spot');
+        spotLight.setAttribute('color', '#e0f2fe');
+        spotLight.setAttribute('intensity', '5');
+        spotLight.setAttribute('angle', '45');
+        spotLight.setAttribute('penumbra', '0.5');
+        spotLight.setAttribute('position', '0 2.5 1.5');
+        spotLight.setAttribute('rotation', '-45 0 0'); // Pointing down towards the card
+        pallet.appendChild(spotLight);
+
+        const handleInteraction = (type) => {
+          if (type === 'enter') flipper.emit('hover-start');
+          if (type === 'leave') flipper.emit('hover-end');
+          if (type === 'click') flipper.emit('do-flip');
+        };
+
+        // --- Front Face Configuration ---
+        const frontPlane = document.createElement('a-plane');
+        frontPlane.classList.add('clickable');
+        frontPlane.setAttribute('width', '2.8');
+        frontPlane.setAttribute('height', '1.8');
+        frontPlane.setAttribute('position', '0 0 0.05');
+        frontPlane.setAttribute('color', '#0f172a'); // slate-900
+        frontPlane.setAttribute('material', 'metalness: 0.8; roughness: 0.1; opacity: 0.85; transparent: true');
+
+        // Glowing border for the front
+        const frontBorder = document.createElement('a-plane');
+        frontBorder.setAttribute('width', '2.85');
+        frontBorder.setAttribute('height', '1.85');
+        frontBorder.setAttribute('position', '0 0 -0.01');
+        frontBorder.setAttribute('color', '#38bdf8'); // sky-400
+        frontBorder.setAttribute('material', 'shader: flat');
+        frontPlane.appendChild(frontBorder);
+
+        // Text for the front
+        const frontText = document.createElement('a-text');
+        frontText.setAttribute('value', quote);
+        frontText.setAttribute('align', 'center');
+        frontText.setAttribute('position', '0 0 0.02');
+        frontText.setAttribute('width', '2.5');
+        frontText.setAttribute('wrap-count', '22');
+        frontText.setAttribute('color', '#f8fafc'); // slate-50
+        frontText.setAttribute('font', 'mozillavr');
+        frontPlane.appendChild(frontText);
+
+        // --- Back Face Configuration ---
+        const backPlane = document.createElement('a-plane');
+        backPlane.classList.add('clickable');
+        backPlane.setAttribute('width', '2.8');
+        backPlane.setAttribute('height', '1.8');
+        backPlane.setAttribute('position', '0 0 -0.05');
+        backPlane.setAttribute('color', '#0f172a');
+        backPlane.setAttribute('material', 'metalness: 0.8; roughness: 0.1; opacity: 0.85; transparent: true');
+
+        // Glowing border for the back
+        const backBorder = document.createElement('a-plane');
+        backBorder.setAttribute('width', '2.85');
+        backBorder.setAttribute('height', '1.85');
+        backBorder.setAttribute('position', '0 0 -0.01');
+        backBorder.setAttribute('color', '#f472b6'); // pink-400
+        backBorder.setAttribute('material', 'shader: flat');
+        backPlane.appendChild(backBorder);
+
+        // Correcting orientation to prevent mirrored/upside-down text on the back
+        if (axis === 'x') {
+          backPlane.setAttribute('rotation', '180 0 0');
+        } else {
+          backPlane.setAttribute('rotation', '0 180 0');
+        }
+
+        // Text for the back
+        const backText = document.createElement('a-text');
+        backText.setAttribute('value', `- ${author} -`);
+        backText.setAttribute('align', 'center');
+        backText.setAttribute('position', '0 0 0.02');
+        backText.setAttribute('width', '2.8');
+        backText.setAttribute('wrap-count', '18');
+        backText.setAttribute('color', '#f472b6');
+        backText.setAttribute('font', 'mozillavr');
+        backPlane.appendChild(backText);
+
+        // Attach event listeners to planes
+        frontPlane.addEventListener('mouseenter', () => handleInteraction('enter'));
+        frontPlane.addEventListener('mouseleave', () => handleInteraction('leave'));
+        frontPlane.addEventListener('click', () => handleInteraction('click'));
+
+        backPlane.addEventListener('mouseenter', () => handleInteraction('enter'));
+        backPlane.addEventListener('mouseleave', () => handleInteraction('leave'));
+        backPlane.addEventListener('click', () => handleInteraction('click'));
+
+        flipper.appendChild(frontPlane);
+        flipper.appendChild(backPlane);
+        pallet.appendChild(flipper);
+      });
+    });
+  </script>
+</head>
+
+<body>
+  <div id="ui-container">
+    <div class="title">Interactive Dynamic Pallets</div>
+    <div class="controls">WASD = Move | Mouse = Look | Hover + Left Click = Flip Pallet</div>
+  </div>
+
+  <a-scene background="color: #020617">
+    <!-- Scene Lighting -->
+    <a-light type="ambient" color="#0f172a" intensity="0.6"></a-light>
+
+    <!-- Art Gallery Room -->
+    <a-entity id="room">
+      <!-- Floor -->
+      <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" color="#0f172a"
+        material="metalness: 0.8; roughness: 0.2"></a-plane>
+      <!-- Ceiling -->
+      <a-plane position="0 6 0" rotation="90 0 0" width="20" height="20" color="#020617"></a-plane>
+      <!-- Walls -->
+      <a-plane position="0 3 -10" width="20" height="6" color="#1e293b"></a-plane> <!-- Front -->
+      <a-plane position="0 3 10" rotation="0 180 0" width="20" height="6" color="#1e293b"></a-plane> <!-- Back -->
+      <a-plane position="-10 3 0" rotation="0 90 0" width="20" height="6" color="#1e293b"></a-plane> <!-- Left -->
+      <a-plane position="10 3 0" rotation="0 -90 0" width="20" height="6" color="#1e293b"></a-plane> <!-- Right -->
+    </a-entity>
+
+    <!-- Camera Rig & Interactive Cursor -->
+    <a-entity position="0 1.6 0">
+      <a-camera>
+        <a-cursor color="#FFF" raycaster="objects: .clickable"
+          animation__click="property: scale; startEvents: click; easing: easeInCubic; dur: 150; from: 0.1 0.1 0.1; to: 1 1 1"
+          animation__fusing="property: fusing; startEvents: fusing; easing: easeInCubic; dur: 1500; from: 1 1 1; to: 0.1 0.1 0.1">
+        </a-cursor>
+      </a-camera>
+    </a-entity>
+
+    <!-- Decorative LED Strip (Cylinder with Point Lights) -->
+    <a-entity position="0 5.8 -4">
+      <a-cylinder radius="0.05" height="18" rotation="0 0 90" color="#38bdf8"
+        material="shader: flat; opacity: 0.9"></a-cylinder>
+      <a-light type="point" color="#38bdf8" intensity="0.6" position="-6 0 0" distance="15"></a-light>
+      <a-light type="point" color="#38bdf8" intensity="0.6" position="0 0 0" distance="15"></a-light>
+      <a-light type="point" color="#38bdf8" intensity="0.6" position="6 0 0" distance="15"></a-light>
+    </a-entity>
+
+    <!-- 5 Pallets positioned inside the gallery room with spacious layout -->
+    <a-entity class="pallet" position="-9.9 2.5 -4" rotation="0 90 0"
+      data-quote="The only limit to our realization of tomorrow is our doubts of today."
+      data-author="Franklin D. Roosevelt"></a-entity>
+
+    <a-entity class="pallet" position="-5 2.5 -9.9" rotation="0 0 0"
+      data-quote="Do what you can, with what you have, where you are." data-author="Theodore Roosevelt"></a-entity>
+
+    <a-entity class="pallet" position="0 2.5 -9.9" rotation="0 0 0"
+      data-quote="It does not matter how slowly you go as long as you do not stop." data-author="Confucius"></a-entity>
+
+    <a-entity class="pallet" position="5 2.5 -9.9" rotation="0 0 0"
+      data-quote="Everything you've ever wanted is on the other side of fear." data-author="George Addair"></a-entity>
+
+    <a-entity class="pallet" position="9.9 2.5 -4" rotation="0 -90 0"
+      data-quote="Success is not final, failure is not fatal: it is the courage to continue that counts."
+      data-author="Winston Churchill"></a-entity>
+
+  </a-scene>
+</body>
+
+</html>
